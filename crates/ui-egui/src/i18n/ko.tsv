@@ -2935,3 +2935,5 @@ fontWeight	Italic	기울임
 	XOR	XOR
 	Color Burn (Paint.NET)	색상 번 (Paint.NET)
 	Color Dodge (Paint.NET)	색상 닷지 (Paint.NET)
+	GPU memory mb	GPU 메모리(MB)
+	Memory usage percent	메모리 사용 비율(%)

@@ -33,9 +33,9 @@ note = "photocraft_format::atomic_write (format/src/atomic.rs, #230): same-dir t
 [[item]]
 id = "REL-212-1"
 target = "Fallible allocation for paste/erase/fill/transform/save/import, clear out-of-memory error"
-status = "missing"
+status = "partial"
 issue = 212
-note = "try_reserve only in io/flat.rs:221; codec max_alloc limits cover decode only"
+note = "Process-wide memory reservations guard filter and lens working buffers before modifying the document; cold pixel/history tiles spill to CRC-checked storage. Other editing operations and large format buffers still need allocation admission or streaming."
 
 [[item]]
 id = "REL-212-2"

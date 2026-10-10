@@ -1784,7 +1784,7 @@ fn convert_tile(surface: &Surface, tile: Option<&Arc<Tile>>, kind: TexKind, c: T
     let fmt = surface.format();
     let ch = fmt.channels();
     if let (Some(t), TexKind::Rgba16F) = (tile, kind)
-        && let Some(out) = rgb_gray16_to_f16(&fmt, t.bytes())
+        && let Some(out) = rgb_gray16_to_f16(&fmt, &t.bytes())
     {
         return out;
     }
@@ -2156,7 +2156,7 @@ mod tests {
             let data: Vec<f32> = (0..n).map(|i| (i as u32).wrapping_mul(2_654_435_761) as f32 / u32::MAX as f32).collect();
             s.write_region(r, &data);
             let t = s.tile(TileCoord::new(0, 0)).expect("written").clone();
-            let fast = rgb_gray16_to_f16(&fmt, t.bytes()).expect("fast path");
+            let fast = rgb_gray16_to_f16(&fmt, &t.bytes()).expect("fast path");
             let raw = s.read_region(r);
             let general: Vec<u8> =
                 raw.chunks_exact(fmt.channels()).flat_map(|px| photocraft_raster::to_rgba(&fmt, px).map(|x| f32_to_f16(x).to_le_bytes())).flatten().collect();

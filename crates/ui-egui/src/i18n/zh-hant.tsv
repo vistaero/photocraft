@@ -2333,3 +2333,5 @@ fontWeight	Italic	斜體
 	XOR	XOR
 	Color Burn (Paint.NET)	加深顏色 (Paint.NET)
 	Color Dodge (Paint.NET)	加亮顏色 (Paint.NET)
+	GPU memory mb	GPU 記憶體 (MB)
+	Memory usage percent	記憶體使用比例 (%)

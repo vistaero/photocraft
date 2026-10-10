@@ -77,6 +77,13 @@ The transform also corrects f32 envelope errors past coordinate 4096, including 
 distances at selected pixels. The parallel path needs an additional four bytes per pixel;
 see [measurements, correctness and limits](selection-distance-performance.md).
 
+2026-10-10: native scratch storage pages current and history tiles through compressed,
+CRC-checked files. New process budgets default to 70% of physical RAM; engine-owned memory
+supervision stops with its last session. Scratch errors block edit/save commits and can retry
+the original bytes after recovery. Unix files are private and stale files are swept on startup;
+Windows files use delete-on-close. See [scratch disks](scratch-disks.md). Streaming codecs and
+viewport rendering are separate follow-up changes.
+
 **Bottom line.** Two days after 0.2.0 we had merged ~96 PRs and closed ~48 issues, but **real
 Photoshop parity is still well below 50%**. The biggest gaps are AI, missing tools, professional
 workflow depth and the plug-in ecosystem. Most fixes since 0.2.0 have passed our tests but have

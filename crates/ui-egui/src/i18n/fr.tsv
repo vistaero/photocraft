@@ -2777,3 +2777,5 @@ fontWeight	Italic	Italique
 	XOR	XOR
 	Color Burn (Paint.NET)	Densité couleur + (Paint.NET)
 	Color Dodge (Paint.NET)	Densité couleur − (Paint.NET)
+	GPU memory mb	Mémoire GPU (Mo)
+	Memory usage percent	Utilisation de la mémoire (%)

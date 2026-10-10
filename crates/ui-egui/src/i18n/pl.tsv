@@ -3379,3 +3379,5 @@ cameraRaw	Roughness	Chropowatość
 	XOR	XOR
 	Color Burn (Paint.NET)	Wypalanie koloru (Paint.NET)
 	Color Dodge (Paint.NET)	Rozjaśnianie koloru (Paint.NET)
+	GPU memory mb	Pamięć GPU (MB)
+	Memory usage percent	Użycie pamięci (%)
