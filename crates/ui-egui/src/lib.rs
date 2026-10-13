@@ -210,6 +210,8 @@ pub type WriteFn = Box<dyn FnMut(&str, &[u8]) -> Result<(), String>>;
 /// warnings. Runs on a worker thread (see [`Services::save_file`]). It must call
 /// [`jobs_ui::SaveCtl::commit`] right before replacing the file, and write nothing if that fails.
 pub type SaveFileFn = std::sync::Arc<dyn Fn(&Document, &str, &ExportSettings, &jobs_ui::SaveCtl) -> Result<Vec<String>, String> + Send + Sync>;
+/// Decode a document through handles beneath the desktop control session's authorized root.
+pub type AutomationImportPathFn = std::sync::Arc<dyn Fn(&str, &photocraft_raster::Interrupt<'_>) -> Result<photocraft_io::ImportResult, String> + Send + Sync>;
 /// Read bytes through the desktop control session's authorized read root.
 pub type AutomationReadFn = Box<dyn FnMut(&str) -> Result<(String, Vec<u8>), String>>;
 /// Write bytes through the desktop control session's authorized write root.
@@ -288,6 +290,7 @@ pub struct Services {
     /// File access used only by control/MCP requests. Interactive dialogs keep
     /// using `file_dialog` and `write` with the user's authority.
     pub automation_read: Option<AutomationReadFn>,
+    pub automation_import_path: Option<AutomationImportPathFn>,
     pub automation_write: Option<AutomationWriteFn>,
     pub automation_command: Option<AutomationCommandFn>,
     /// Same policy as [`Self::automation_command`], as a function pointer the engine calls for
@@ -906,17 +909,21 @@ impl PhotocraftApp {
         }
         let import = self.services.import.as_ref().ok_or("no importer configured")?;
         let (doc, warnings) = import(name, bytes)?;
+        Ok(self.opened_document(name, doc, warnings, Some(bytes)))
+    }
+
+    pub(crate) fn opened_document(&mut self, name: &str, doc: Document, warnings: Vec<String>, bytes: Option<&[u8]>) -> Vec<String> {
         // Edit › Color Settings policies apply on open; mismatches can ask what to do.
         // No path yet: a bare name isn't a location to save back to (`open_file` sets the path).
         let (_, color) = self.session.open_document(doc, None);
         if let Some(st) = self.session.active_mut() {
-            st.source_read_only = photocraft_io::affinity::is_affinity(bytes);
+            st.source_read_only = bytes.is_some_and(photocraft_io::affinity::is_affinity);
         }
         self.sync_views();
         self.ui.status = format!("Opened {name}");
         self.ui.status_error = false;
         if camera_raw_ui::wants_open_dialog(self, &warnings) {
-            camera_raw_ui::queue_open_dialog(self, name, None, Some(bytes));
+            camera_raw_ui::queue_open_dialog(self, name, None, bytes);
             notices::io_warnings(self, &format!("Opened {name}"), &camera_raw_ui::without_develop_note(&warnings));
         } else {
             notices::io_warnings(self, &format!("Opened {name}"), &warnings);
@@ -928,7 +935,7 @@ impl PhotocraftApp {
         if ask && (color.get("mismatch").and_then(Value::as_bool) == Some(true) || color.get("missing").is_some()) {
             prefs_ui::open_mismatch(self, &color);
         }
-        Ok(warnings)
+        warnings
     }
 
     /// Open bytes supplied by an authenticated automation client without

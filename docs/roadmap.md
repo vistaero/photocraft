@@ -84,6 +84,11 @@ the original bytes after recovery. Unix files are private and stale files are sw
 Windows files use delete-on-close. See [scratch disks](scratch-disks.md). Streaming codecs and
 viewport rendering are separate follow-up changes.
 
+2026-10-10: seekable native PSD/PSB and supported scanline EXR opens decode bounded bands at
+the original resolution. Synthetic comparisons preserve pixels, masks and metadata across
+depths and colour modes; authorized opens retain read-only source protection. The preference
+audit now reports 47 unread settings out of 148. See [native streaming I/O](streaming-io.md).
+
 **Bottom line.** Two days after 0.2.0 we had merged ~96 PRs and closed ~48 issues, but **real
 Photoshop parity is still well below 50%**. The biggest gaps are AI, missing tools, professional
 workflow depth and the plug-in ecosystem. Most fixes since 0.2.0 have passed our tests but have
